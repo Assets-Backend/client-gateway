@@ -1,0 +1,65 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: ID!
+  user_id: Int!
+  email: String!
+  phone: String
+  roles: [user_types!]!
+  gender: gender_options!
+  deleted_at: String
+  last_login: String
+  updated_at: String!
+  created_at: String!
+}
+
+"""
+Enumeración que representa los diferentes tipos de usuarios del sistema: `client` (coordinadores) y "professional` (profesionales).
+"""
+enum user_types {
+  client
+  professional
+  clientAdmin
+}
+
+"""Enumeración que representa el genero del usuario."""
+enum gender_options {
+  m
+  f
+  M
+  F
+}
+
+type AuthResponse {
+  token: String!
+  user: User!
+}
+
+type Query {
+  sayHello: String!
+  revalidateToken: AuthResponse!
+}
+
+type Mutation {
+  Login(loginInput: LoginInput!): AuthResponse!
+  SignupClient(signupInput: SignupInput!): AuthResponse!
+  SignupProfessional(signupInput: SignupInput!): AuthResponse!
+}
+
+input LoginInput {
+  email: String
+  phone: String
+  password: String!
+}
+
+input SignupInput {
+  user_id: Int!
+  name: String!
+  last_name: String!
+  email: String!
+  phone: String
+  password: String!
+  gender: gender_options!
+}
