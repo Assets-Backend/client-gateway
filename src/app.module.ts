@@ -6,6 +6,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default'
 import { 
     AuthModule,
+    ClientModule,
+    PatientModule,
 } from './modules';
 
 @Module({
@@ -21,6 +23,8 @@ import {
         }),
         NatsModule,
         AuthModule,
+        // ClientModule,
+        // PatientModule,
     ],
     controllers: [],
     providers: [],

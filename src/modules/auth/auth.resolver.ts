@@ -1,4 +1,4 @@
-import { Args, Query, Mutation, Resolver, ResolveField, Parent } from "@nestjs/graphql";
+import { Args, Query, Mutation, Resolver } from "@nestjs/graphql";
 import { AuthResponse } from "./types/auth-response.type";
 import { LoginInput, SignupInput } from "./dto";
 import { NATS_SERVICE } from "src/config";
@@ -7,7 +7,6 @@ import { ClientProxy, RpcException } from "@nestjs/microservices";
 import { catchError } from "rxjs";
 import { CurrentToken } from "./decorators";
 import { Auth } from "./decorators/composition/auth.decorator";
-import { user_types } from "./enums/user_types.enum";
 
 @Resolver(() => AuthResponse)
 export class AuthResolver {
@@ -15,11 +14,6 @@ export class AuthResolver {
     constructor(
         @Inject(NATS_SERVICE) private readonly client: ClientProxy
     ) {}
-
-    @Query(() => String)
-    sayHello(): string {
-        return 'Hello, world!';
-    }
 
     @Mutation(() => AuthResponse, { name: 'Login' })
     async loginUser(
