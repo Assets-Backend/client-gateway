@@ -37,14 +37,38 @@ type AuthResponse {
   user: User!
 }
 
+type Client {
+  client_id: ID!
+  client_fk: Int
+  mongo_id: String!
+  name: String!
+  last_name: String!
+  profile: String!
+  deleted_at: String
+  updated_at: String!
+  created_at: String!
+}
+
+type Patient {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   revalidateToken: AuthResponse!
+  Client: Client!
+  findUsers(offset: Int = 0, limit: Int = 10): [Client!]!
+  patient(id: Int!): Patient!
 }
 
 type Mutation {
   Login(loginInput: LoginInput!): AuthResponse!
   SignupClient(signupInput: SignupInput!): AuthResponse!
   SignupProfessional(signupInput: SignupInput!): AuthResponse!
+  deleteUser(user_id: ID!): Client!
+  createPatient(createPatientInput: CreatePatientInput!): Patient!
+  updatePatient(updatePatientInput: UpdatePatientInput!): Patient!
+  removePatient(id: Int!): Patient!
 }
 
 input LoginInput {
@@ -61,4 +85,15 @@ input SignupInput {
   phone: String
   password: String!
   gender: gender_options!
+}
+
+input CreatePatientInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdatePatientInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }

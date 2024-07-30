@@ -7,6 +7,5 @@ import { AuthResolver } from './auth.resolver';
         NatsModule,
     ],
     providers: [AuthResolver],
-    exports: [],
 })
 export class AuthModule {}

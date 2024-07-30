@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-import { IsEmail, IsEnum, IsNumber, IsOptional, IsPhoneNumber, IsPositive, IsString, IsStrongPassword } from "class-validator";
+import { IsEmail, IsEnum, IsNumber, IsOptional, IsPhoneNumber, IsPositive, IsString, IsStrongPassword, MaxLength, MinLength } from "class-validator";
 import { gender_options } from "src/common/enums";
 
 @InputType()
@@ -12,10 +12,14 @@ export class SignupInput {
 
     @Field( () => String )
     @IsString()
+    @MinLength(2)
+    @MaxLength(100)
     name: string;
 
     @Field( () => String )
     @IsString()
+    @MinLength(2)
+    @MaxLength(100)
     last_name: string;
     
     @Field( () => String )

@@ -1,37 +1,62 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql';
 import { Client } from './entities/client.entity';
-import { CreateClientInput } from './dto/create-client.input';
-import { UpdateClientInput } from './dto/update-client.input';
+import { CreateClientInput, UpdateClientInput } from './dto';
+import { Inject, ParseIntPipe } from '@nestjs/common';
+import { NATS_SERVICE } from 'src/config';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { Auth } from 'src/modules/auth/decorators/composition/auth.decorator';
+import { user_types } from 'src/modules/auth/enums/user_types.enum';
+import { CurrentUser } from 'src/modules/auth/decorators';
+import { User } from 'src/modules/auth/entities/user.entity';
+import { catchError } from 'rxjs';
+import { PaginationArgs } from 'src/common/dto';
 
 @Resolver(() => Client)
 export class ClientResolver {
     
     constructor(
-
+        @Inject(NATS_SERVICE) private readonly client: ClientProxy
     ) {}
 
-    @Mutation(() => Client)
-    createClient(@Args('createClientInput') createClientInput: CreateClientInput) {
-        // return this.clientService.create(createClientInput);
+    @Auth(user_types.client)
+    @Query(() => Client, { name: 'Client' })
+    async Client(
+        @CurrentUser() user: User
+    ): Promise<Client> {
+
+        return this.client.send('coordinator.find.user', {mongo_id: user.id, client_id: user.user_id}).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as Client;
     }
 
-    @Query(() => [Client], { name: 'client' })
-    findAll() {
-        // return this.clientService.findAll();
+    @Auth(user_types.clientAdmin)
+    @Query(() => [Client], { name: 'findUsers' })
+    async findUsers(
+        @CurrentUser() user: User,
+        @Args() paginationArgs: PaginationArgs,
+    ): Promise<Client[]> {
+
+        return this.client.send('coordinator.find.users', {mongo_id: user.id, client_id: user.user_id, paginationDto: paginationArgs}).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as Client[];
     }
 
-    @Query(() => Client, { name: 'client' })
-    findOne(@Args('id', { type: () => Int }) id: number) {
-        // return this.clientService.findOne(id);
+    @Auth(user_types.clientAdmin)
+    @Mutation(() => Client, { name: 'deleteUser' })
+    async deleteUser(
+        @CurrentUser() user: User,
+        @Args('user_id', { type: () => ID }, ParseIntPipe) user_id: User['user_id']
+    ): Promise<Client> {
+
+        return this.client.send('coordinator.delete.user', {mongo_id: user.id, client_id: user.user_id, user_id}).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as Client;
     }
 
-    @Mutation(() => Client)
-    updateClient(@Args('updateClientInput') updateClientInput: UpdateClientInput) {
-        // return this.clientService.update(updateClientInput.id, updateClientInput);
-    }
-
-    @Mutation(() => Client)
-    removeClient(@Args('id', { type: () => Int }) id: number) {
-        // return this.clientService.remove(id);
-    }
 }

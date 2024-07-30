@@ -6,7 +6,7 @@ import { user_types } from 'src/modules/auth/enums/user_types.enum';
 export class User {
 
     @Field(() => ID)
-    id: number;
+    id: string;
 
     @Field(() => Int)
     user_id: number;
