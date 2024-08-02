@@ -84,6 +84,18 @@ type Company {
   created_at: String!
 }
 
+type Treatment {
+  treatment_id: Int!
+  client_fk: Int!
+  updated_by: Int!
+  name: String!
+  abbreviation: String!
+  description: String
+  deleted_at: String
+  updated_at: String!
+  created_at: String!
+}
+
 type Query {
   revalidateToken: AuthResponse!
   Client: Client!
@@ -93,6 +105,8 @@ type Query {
   findPatients(offset: Int = 0, limit: Int = 10): [Patient!]!
   findCompany(company_id: Int!): Company!
   findCompanies(offset: Int = 0, limit: Int = 10): [Company!]!
+  findTreatment(treatment_id: Int!): Treatment!
+  findTreatments(offset: Int = 0, limit: Int = 10): [Treatment!]!
 }
 
 type Mutation {
@@ -107,6 +121,9 @@ type Mutation {
   createCompany(createCompanyInput: CreateCompanyInput!): Company!
   updateCompany(updateCompanyInput: UpdateCompanyInput!): Company!
   deleteCompany(deleteCompanyInput: DeleteCompanyInput!): Company!
+  createTreatment(createTreatmentInput: CreateTreatmentInput!): Treatment!
+  updateTreatment(updateTreatmentInput: UpdateTreatmentInput!): Treatment!
+  deleteTreatment(deleteTreatmentInput: DeleteTreatmentInput!): Treatment!
 }
 
 input LoginInput {
@@ -173,4 +190,21 @@ input UpdateCompanyInput {
 
 input DeleteCompanyInput {
   company_id: Int!
+}
+
+input CreateTreatmentInput {
+  name: String!
+  abbreviation: String!
+  description: String
+}
+
+input UpdateTreatmentInput {
+  name: String
+  abbreviation: String
+  description: String
+  treatment_id: Int!
+}
+
+input DeleteTreatmentInput {
+  treatment_id: Int!
 }
