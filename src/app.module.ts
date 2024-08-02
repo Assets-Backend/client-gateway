@@ -11,6 +11,7 @@ import {
     CompanyModule,
     TreatmentModule
 } from './modules';
+import { CompanyHasTreatmentModule } from './modules/coordinator/company-has-treatment/company-has-treatment.module';
 
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import {
         PatientModule,
         CompanyModule,
         TreatmentModule,
+        CompanyHasTreatmentModule,
     ],
     controllers: [],
     providers: [],

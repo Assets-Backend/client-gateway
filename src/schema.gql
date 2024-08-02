@@ -96,6 +96,16 @@ type Treatment {
   created_at: String!
 }
 
+type CompanyHasTreatment {
+  client_fk: Int!
+  company_fk: Int!
+  treatment_fk: Int!
+  value: Float!
+  updated_by: Int!
+  updated_at: String!
+  created_at: String!
+}
+
 type Query {
   revalidateToken: AuthResponse!
   Client: Client!
@@ -107,6 +117,13 @@ type Query {
   findCompanies(offset: Int = 0, limit: Int = 10): [Company!]!
   findTreatment(treatment_id: Int!): Treatment!
   findTreatments(offset: Int = 0, limit: Int = 10): [Treatment!]!
+  findCompanyHasTreatment(compositeIdInput: CompositeIdInput!): CompanyHasTreatment!
+  findCompanyHasTreatments(offset: Int = 0, limit: Int = 10): [CompanyHasTreatment!]!
+}
+
+input CompositeIdInput {
+  company_fk: Int!
+  treatment_fk: Int!
 }
 
 type Mutation {
@@ -124,6 +141,9 @@ type Mutation {
   createTreatment(createTreatmentInput: CreateTreatmentInput!): Treatment!
   updateTreatment(updateTreatmentInput: UpdateTreatmentInput!): Treatment!
   deleteTreatment(deleteTreatmentInput: DeleteTreatmentInput!): Treatment!
+  createCompanyHasTreatment(createCompanyHasTreatmentInput: CreateCompanyHasTreatmentInput!): CompanyHasTreatment!
+  updateCompanyHasTreatment(updateCompanyHasTreatmentInput: UpdateCompanyHasTreatmentInput!): CompanyHasTreatment!
+  deleteCompanyHasTreatment(compositeIdInput: CompositeIdInput!): CompanyHasTreatment!
 }
 
 input LoginInput {
@@ -207,4 +227,16 @@ input UpdateTreatmentInput {
 
 input DeleteTreatmentInput {
   treatment_id: Int!
+}
+
+input CreateCompanyHasTreatmentInput {
+  company_fk: Int!
+  treatment_fk: Int!
+  value: Float!
+}
+
+input UpdateCompanyHasTreatmentInput {
+  company_fk: Int!
+  treatment_fk: Int!
+  value: Float
 }
