@@ -10,9 +10,9 @@ export const CurrentUser = createParamDecorator(
 
         const user: User = data ? req.user[data] : req.user;
 
-        if (!req.user)
+        if (!user)
             throw new InternalServerErrorException('User not found in request object (AuthGuard)');
 
-        return req.user;
+        return user;
     }
 )

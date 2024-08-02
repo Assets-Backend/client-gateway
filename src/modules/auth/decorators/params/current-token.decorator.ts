@@ -7,8 +7,6 @@ export const CurrentToken = createParamDecorator(
         const ctx = GqlExecutionContext.create(context);
         const req = ctx.getContext().req;
 
-        
-
         if (!req.token)
             throw new InternalServerErrorException('Token not found in request object (AuthGuard)');
 

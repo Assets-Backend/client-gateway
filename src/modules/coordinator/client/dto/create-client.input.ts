@@ -1,8 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsMongoId, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsString, MaxLength, MinLength } from 'class-validator';
+import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 
 @InputType()
 export class CreateClientInput {
+
+    clientUpdateBy: ClientIds;
 
     @Field( () => String )
     @IsString()

@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { Client } from './entities/client.entity';
 import { CreateClientInput, UpdateClientInput } from './dto';
 import { Inject, ParseIntPipe } from '@nestjs/common';
@@ -10,6 +10,7 @@ import { CurrentUser } from 'src/modules/auth/decorators';
 import { User } from 'src/modules/auth/entities/user.entity';
 import { catchError } from 'rxjs';
 import { PaginationArgs } from 'src/common/dto';
+import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 
 @Resolver(() => Client)
 export class ClientResolver {
@@ -24,7 +25,10 @@ export class ClientResolver {
         @CurrentUser() user: User
     ): Promise<Client> {
 
-        return this.client.send('coordinator.find.user', {mongo_id: user.id, client_id: user.user_id}).pipe(
+        const { current_client: currentClient }: { current_client: ClientIds } = user;
+        const { user_id } = user;
+
+        return this.client.send('coordinator.find.user', {currentClient, user_id}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })
@@ -38,25 +42,44 @@ export class ClientResolver {
         @Args() paginationArgs: PaginationArgs,
     ): Promise<Client[]> {
 
-        return this.client.send('coordinator.find.users', {mongo_id: user.id, client_id: user.user_id, paginationDto: paginationArgs}).pipe(
+        const { current_client: currentClient }: { current_client: ClientIds } = user;
+
+        return this.client.send('coordinator.find.users', {currentClient, paginationDto: paginationArgs}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })
         ) as unknown as Client[];
     }
 
-    @Auth(user_types.clientAdmin)
-    @Mutation(() => Client, { name: 'deleteUser' })
-    async deleteUser(
+    @Auth(user_types.client)
+    @Mutation(() => Client, { name: 'updateUser' })
+    async updateUser(
         @CurrentUser() user: User,
-        @Args('user_id', { type: () => ID }, ParseIntPipe) user_id: User['user_id']
+        @Args('updateClientInput') updateClientInput: UpdateClientInput
     ): Promise<Client> {
 
-        return this.client.send('coordinator.delete.user', {mongo_id: user.id, client_id: user.user_id, user_id}).pipe(
+        const { current_client: currentClient }: { current_client: ClientIds } = user;
+
+        return this.client.send('coordinator.update.user', {currentClient, updateClientDto: updateClientInput}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })
         ) as unknown as Client;
     }
 
+    @Auth(user_types.clientAdmin)
+    @Mutation(() => Client, { name: 'deleteUser' })
+    async deleteUser(
+        @CurrentUser() user: User,
+        @Args('user_id', { type: () => Int }, ParseIntPipe) user_id: User['user_id']
+    ): Promise<Client> {
+
+        const currentClient: ClientIds = { mongo_id: user.id, client_id: user.user_id };
+
+        return this.client.send('coordinator.delete.user', {currentClient, user_id}).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as Client;
+    }
 }
