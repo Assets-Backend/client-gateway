@@ -8,6 +8,7 @@ import {
     AuthModule,
     ClientModule,
     PatientModule,
+    CompanyModule
 } from './modules';
 
 @Module({
@@ -25,6 +26,7 @@ import {
         AuthModule,
         ClientModule,
         PatientModule,
+        CompanyModule,
     ],
     controllers: [],
     providers: [],

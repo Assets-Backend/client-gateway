@@ -52,6 +52,23 @@ export class PatientResolver {
     }
 
     @Auth(user_types.client)
+    @Query(() => [Patient], { name: 'findPatientsByCompany' })
+    async findPatientsByCompany(
+        @CurrentUser() user: User,
+        @Args('company_fk', { type: () => Int }, ParseIntPipe) company_fk: Patient['company_fk'],
+        @Args() paginationArgs: PaginationArgs,
+    ): Promise<Patient[]> {
+
+        const { current_client: currentClient }: { current_client: ClientIds } = user;
+
+        return this.client.send('coordinator.findByCompany.patient', {currentClient, company_fk, paginationDto: paginationArgs}).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as Patient[];
+    }
+
+    @Auth(user_types.client)
     @Query(() => [Patient], { name: 'findPatients' })
     async findPatients(
         @CurrentUser() user: User,

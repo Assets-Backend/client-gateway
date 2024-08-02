@@ -1,14 +1,14 @@
 import { IsInt, IsPositive, Max } from 'class-validator';
 import { Field, InputType, Int, PickType } from '@nestjs/graphql';
-import { UpdatePatientInput } from './update-patient.input';
+import { UpdateCompanyInput } from './update-company.input';
 
 @InputType()
-export class DeletePatientInput extends PickType(UpdatePatientInput, ['patient_id', 'updated_by'] as const) {
+export class DeleteCompanyInput extends PickType(UpdateCompanyInput, ['company_id', 'updated_by'] as const) {
 
     @Field(() => Int)
     @IsInt()
     @IsPositive()
     @Max(2147483647)
-    patient_id: number;
+    company_id: number;
 
 }

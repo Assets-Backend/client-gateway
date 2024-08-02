@@ -72,12 +72,27 @@ type Patient {
   created_at: String!
 }
 
+type Company {
+  company_id: Int!
+  client_fk: Int!
+  updated_by: Int!
+  name: String!
+  cuit: String
+  note: String
+  deleted_at: String
+  updated_at: String!
+  created_at: String!
+}
+
 type Query {
   revalidateToken: AuthResponse!
   Client: Client!
   findUsers(offset: Int = 0, limit: Int = 10): [Client!]!
   findPatient(patient_id: Int!): Patient!
+  findPatientsByCompany(company_fk: Int!, offset: Int = 0, limit: Int = 10): [Patient!]!
   findPatients(offset: Int = 0, limit: Int = 10): [Patient!]!
+  findCompany(company_id: Int!): Company!
+  findCompanies(offset: Int = 0, limit: Int = 10): [Company!]!
 }
 
 type Mutation {
@@ -89,6 +104,9 @@ type Mutation {
   createPatient(createPatientInput: CreatePatientInput!): Patient!
   updatePatient(updatePatientInput: UpdatePatientInput!): Patient!
   deletePatient(deletePatientInput: DeletePatientInput!): Patient!
+  createCompany(createCompanyInput: CreateCompanyInput!): Company!
+  updateCompany(updateCompanyInput: UpdateCompanyInput!): Company!
+  deleteCompany(deleteCompanyInput: DeleteCompanyInput!): Company!
 }
 
 input LoginInput {
@@ -138,4 +156,21 @@ input UpdatePatientInput {
 
 input DeletePatientInput {
   patient_id: Int!
+}
+
+input CreateCompanyInput {
+  name: String!
+  cuit: String
+  note: String
+}
+
+input UpdateCompanyInput {
+  name: String
+  cuit: String
+  note: String
+  company_id: Int!
+}
+
+input DeleteCompanyInput {
+  company_id: Int!
 }
