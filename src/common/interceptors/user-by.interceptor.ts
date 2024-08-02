@@ -1,10 +1,10 @@
 import { Injectable, ExecutionContext, CallHandler, NestInterceptor } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
-import { ClientIds } from '../interfaces/client-ids.interface';
+import { User } from 'src/modules/auth/entities/user.entity';
 
 @Injectable()
-export class UserUpdateByInterceptor implements NestInterceptor {
+export class UserByInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> {
 
         const ctx = GqlExecutionContext.create(context);
@@ -12,13 +12,23 @@ export class UserUpdateByInterceptor implements NestInterceptor {
         const args = ctx.getArgs()
 
         const input = Object.keys(args)[0]
-        const user = req.user
+        const user:User = req.user
+        const { user_id } = user
 
         const operation = ctx.getInfo().parentType.name
 
         if (!user || operation !== 'Mutation') return next.handle()
 
-        args[input].clientUpdateBy = { mongo_id: user.id, client_id: user.user_id } as ClientIds;
+        // validar args[input] si es un objeto o no
+        const isObject = typeof args[input] === 'object'
+
+        isObject ? 
+            // Si es un objeto
+            args[input].updated_by = user_id
+        :
+            // Si no es un objeto
+            args['updated_by'] = user_id
+        ;
 
         return next.handle()
     }

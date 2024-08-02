@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { envs } from './config';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { RpcCustomExceptionFilter } from './common/exceptions/rpc-custom-exception.filter';
-import { UserUpdateByInterceptor } from './common/interceptors/user-updateby.interceptor';
+import { UserByInterceptor } from './common/interceptors/user-by.interceptor';
 
 async function bootstrap() {
     const logger = new Logger('main-gateway');
@@ -12,7 +12,7 @@ async function bootstrap() {
 
     app.setGlobalPrefix('api');
 
-    app.useGlobalInterceptors(new UserUpdateByInterceptor());
+    app.useGlobalInterceptors(new UserByInterceptor());
 
     app.useGlobalPipes(
         new ValidationPipe({

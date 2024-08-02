@@ -6,7 +6,7 @@ import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 @InputType()
 export class CreatePatientInput {
 
-    clientUpdateBy: ClientIds;
+    updated_by: number;
 
     @Field(() => Int)
     @IsInt()

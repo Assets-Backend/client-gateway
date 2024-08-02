@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql';
 import { Patient } from './entities/patient.entity';
-import { CreatePatientInput, UpdatePatientInput } from './dto';
+import { CreatePatientInput, UpdatePatientInput, DeletePatientInput } from './dto';
 import { Inject, ParseIntPipe } from '@nestjs/common';
 import { NATS_SERVICE } from 'src/config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
@@ -20,10 +20,26 @@ export class PatientResolver {
     ) {}
 
     @Auth(user_types.client)
+    @Mutation(() => Patient, { name: 'createPatient' })
+    async createPatient(
+        @CurrentUser() user: User,
+        @Args('createPatientInput') createPatientInput: CreatePatientInput
+    ): Promise<Patient> {
+
+        const { current_client: currentClient }: { current_client: ClientIds } = user;
+
+        return this.client.send('coordinator.create.patient', {currentClient, createPatientDto: createPatientInput}).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as Patient;
+    }
+
+    @Auth(user_types.client)
     @Query(() => Patient, { name: 'findPatient' })
     async findPatient(
         @CurrentUser() user: User,
-        @Args('patient_id', { type: () => ID }, ParseIntPipe) patient_id: number,
+        @Args('patient_id', { type: () => Int }, ParseIntPipe) patient_id: Patient['patient_id'],
     ): Promise<Patient> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
@@ -71,12 +87,12 @@ export class PatientResolver {
     @Mutation(() => Patient, { name: 'deletePatient' })
     async deletePatient(
         @CurrentUser() user: User,
-        @Args('patient_id', { type: () => Int }, ParseIntPipe) patient_id: Patient['patient_id']
+        @Args('deletePatientInput') deletePatientInput: DeletePatientInput
     ): Promise<Patient> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
-        return this.client.send('coordinator.delete.patient', {currentClient, patient_id}).pipe(
+        return this.client.send('coordinator.delete.patient', {currentClient, deletePatientDto: deletePatientInput}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })

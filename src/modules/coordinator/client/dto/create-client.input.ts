@@ -5,7 +5,7 @@ import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 @InputType()
 export class CreateClientInput {
 
-    clientUpdateBy: ClientIds;
+    updated_by: number;
 
     @Field( () => String )
     @IsString()

@@ -76,7 +76,7 @@ type Query {
   revalidateToken: AuthResponse!
   Client: Client!
   findUsers(offset: Int = 0, limit: Int = 10): [Client!]!
-  findPatient(patient_id: ID!): Patient!
+  findPatient(patient_id: Int!): Patient!
   findPatients(offset: Int = 0, limit: Int = 10): [Patient!]!
 }
 
@@ -86,8 +86,9 @@ type Mutation {
   SignupProfessional(signupInput: SignupInput!): AuthResponse!
   updateUser(updateClientInput: UpdateClientInput!): Client!
   deleteUser(user_id: Int!): Client!
+  createPatient(createPatientInput: CreatePatientInput!): Patient!
   updatePatient(updatePatientInput: UpdatePatientInput!): Patient!
-  deletePatient(patient_id: Int!): Patient!
+  deletePatient(deletePatientInput: DeletePatientInput!): Patient!
 }
 
 input LoginInput {
@@ -112,6 +113,17 @@ input UpdateClientInput {
   profile: String
 }
 
+input CreatePatientInput {
+  company_fk: Int!
+  name: String!
+  last_name: String!
+  healthcare_provider: String
+  gender: gender_options!
+  age: Int
+  phone: String
+  note: String
+}
+
 input UpdatePatientInput {
   company_fk: Int
   name: String
@@ -121,5 +133,9 @@ input UpdatePatientInput {
   age: Int
   phone: String
   note: String
+  patient_id: Int!
+}
+
+input DeletePatientInput {
   patient_id: Int!
 }

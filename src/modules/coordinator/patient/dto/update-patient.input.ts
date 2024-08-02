@@ -9,5 +9,7 @@ export class UpdatePatientInput extends PartialType(CreatePatientInput) {
     @IsInt()
     @IsPositive()
     @Max(2147483647)
-    patient_id: number; 
+    patient_id: number;
+
+    updated_by: number;
 }
