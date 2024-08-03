@@ -9,9 +9,10 @@ import {
     ClientModule,
     PatientModule,
     CompanyModule,
-    TreatmentModule
+    TreatmentModule,
+    CompanyHasTreatmentModule,
+    TreatmentHasProfessionalModule
 } from './modules';
-import { CompanyHasTreatmentModule } from './modules/coordinator/company-has-treatment/company-has-treatment.module';
 
 @Module({
     imports: [
@@ -31,6 +32,7 @@ import { CompanyHasTreatmentModule } from './modules/coordinator/company-has-tre
         CompanyModule,
         TreatmentModule,
         CompanyHasTreatmentModule,
+        TreatmentHasProfessionalModule,
     ],
     controllers: [],
     providers: [],

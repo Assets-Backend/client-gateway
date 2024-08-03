@@ -3,7 +3,7 @@ import { Field, InputType, Int, PickType } from '@nestjs/graphql';
 import { UpdateCompanyHasTreatmentInput } from './update-company-has-treatment.input';
 
 @InputType()
-export class CompositeIdInput extends PickType(UpdateCompanyHasTreatmentInput, ['company_fk', 'treatment_fk'] as const) {
+export class CompositeIdCompanyInput extends PickType(UpdateCompanyHasTreatmentInput, ['company_fk', 'treatment_fk'] as const) {
 
     @Field(() => Int)
     @IsInt()

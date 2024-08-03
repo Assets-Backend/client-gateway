@@ -13,11 +13,12 @@ export class UserByInterceptor implements NestInterceptor {
 
         const input = Object.keys(args)[0]
         const user:User = req.user
-        const { user_id } = user
-
+        
         const operation = ctx.getInfo().parentType.name
-
+        
         if (!user || operation !== 'Mutation') return next.handle()
+            
+        const { user_id } = user
 
         // validar args[input] si es un objeto o no
         const isObject = typeof args[input] === 'object'

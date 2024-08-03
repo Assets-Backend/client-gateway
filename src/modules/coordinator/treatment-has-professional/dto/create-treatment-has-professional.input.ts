@@ -1,8 +1,8 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsDecimal, IsInt, IsNumber, IsPositive, Max } from 'class-validator';
+import { IsInt, IsNumber, IsPositive, Max } from 'class-validator';
 
 @InputType()
-export class CreateCompanyHasTreatmentInput {
+export class CreateTreatmentHasProfessionalInput {
 
     updated_by: number;
 
@@ -17,6 +17,12 @@ export class CreateCompanyHasTreatmentInput {
     @IsPositive()
     @Max(2147483647)
     treatment_fk: number;
+
+    @Field(() => Int)
+    @IsInt()
+    @IsPositive()
+    @Max(2147483647)
+    professional_fk: number;
 
     @Field(() => Number)
     @IsNumber()

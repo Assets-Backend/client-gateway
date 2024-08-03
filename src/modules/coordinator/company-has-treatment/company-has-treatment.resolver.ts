@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { CompanyHasTreatment } from './entities/company-has-treatment.entity';
-import { CreateCompanyHasTreatmentInput, UpdateCompanyHasTreatmentInput, CompositeIdInput } from './dto';
+import { CreateCompanyHasTreatmentInput, UpdateCompanyHasTreatmentInput, CompositeIdCompanyInput } from './dto';
 import { Inject } from '@nestjs/common';
 import { NATS_SERVICE } from 'src/config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
@@ -39,12 +39,12 @@ export class CompanyHasTreatmentResolver {
     @Query(() => CompanyHasTreatment, { name: 'findCompanyHasTreatment' })
     async findCompanyHasTreatment(
         @CurrentUser() user: User,
-        @Args('compositeIdInput') compositeIdInput: CompositeIdInput,
+        @Args('compositeIdCompanyInput') compositeIdCompanyInput: CompositeIdCompanyInput,
     ): Promise<CompanyHasTreatment> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
-        return this.client.send('coordinator.find.companyHasTreatment', {currentClient, compositeIdDto: compositeIdInput})
+        return this.client.send('coordinator.find.companyHasTreatment', {currentClient, compositeIdDto: compositeIdCompanyInput})
         .pipe(
             catchError(error => {
                 throw new RpcException(error)
@@ -88,12 +88,12 @@ export class CompanyHasTreatmentResolver {
     @Mutation(() => CompanyHasTreatment, { name: 'deleteCompanyHasTreatment' })
     async deleteCompanyHasTreatment(
         @CurrentUser() user: User,
-        @Args('compositeIdInput') compositeIdInput: CompositeIdInput,
+        @Args('compositeIdCompanyInput') compositeIdCompanyInput: CompositeIdCompanyInput,
     ): Promise<CompanyHasTreatment> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
-        return this.client.send('coordinator.delete.companyHasTreatment', {currentClient, compositeIdDto: compositeIdInput}).pipe(
+        return this.client.send('coordinator.delete.companyHasTreatment', {currentClient, compositeIdDto: compositeIdCompanyInput}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })

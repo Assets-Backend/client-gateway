@@ -106,6 +106,17 @@ type CompanyHasTreatment {
   created_at: String!
 }
 
+type TreatmentHasProfessional {
+  client_fk: Int!
+  company_fk: Int!
+  treatment_fk: Int!
+  professional_fk: Int!
+  value: Float!
+  updated_by: Int!
+  updated_at: String!
+  created_at: String!
+}
+
 type Query {
   revalidateToken: AuthResponse!
   Client: Client!
@@ -117,13 +128,21 @@ type Query {
   findCompanies(offset: Int = 0, limit: Int = 10): [Company!]!
   findTreatment(treatment_id: Int!): Treatment!
   findTreatments(offset: Int = 0, limit: Int = 10): [Treatment!]!
-  findCompanyHasTreatment(compositeIdInput: CompositeIdInput!): CompanyHasTreatment!
+  findCompanyHasTreatment(compositeIdCompanyInput: CompositeIdCompanyInput!): CompanyHasTreatment!
   findCompanyHasTreatments(offset: Int = 0, limit: Int = 10): [CompanyHasTreatment!]!
+  findTreatmentHasProfessional(compositeIdTreatmentInput: CompositeIdTreatmentInput!): TreatmentHasProfessional!
+  findTreatmentHasProfessionals(offset: Int = 0, limit: Int = 10): [TreatmentHasProfessional!]!
 }
 
-input CompositeIdInput {
+input CompositeIdCompanyInput {
   company_fk: Int!
   treatment_fk: Int!
+}
+
+input CompositeIdTreatmentInput {
+  company_fk: Int!
+  treatment_fk: Int!
+  professional_fk: Int!
 }
 
 type Mutation {
@@ -143,7 +162,9 @@ type Mutation {
   deleteTreatment(deleteTreatmentInput: DeleteTreatmentInput!): Treatment!
   createCompanyHasTreatment(createCompanyHasTreatmentInput: CreateCompanyHasTreatmentInput!): CompanyHasTreatment!
   updateCompanyHasTreatment(updateCompanyHasTreatmentInput: UpdateCompanyHasTreatmentInput!): CompanyHasTreatment!
-  deleteCompanyHasTreatment(compositeIdInput: CompositeIdInput!): CompanyHasTreatment!
+  deleteCompanyHasTreatment(compositeIdCompanyInput: CompositeIdCompanyInput!): CompanyHasTreatment!
+  updateTreatmentHasProfessional(updateTreatmentHasProfessionalInput: UpdateTreatmentHasProfessionalInput!): TreatmentHasProfessional!
+  deleteTreatmentHasProfessional(compositeIdTreatmentInput: CompositeIdTreatmentInput!): TreatmentHasProfessional!
 }
 
 input LoginInput {
@@ -238,5 +259,12 @@ input CreateCompanyHasTreatmentInput {
 input UpdateCompanyHasTreatmentInput {
   company_fk: Int!
   treatment_fk: Int!
+  value: Float
+}
+
+input UpdateTreatmentHasProfessionalInput {
+  company_fk: Int!
+  treatment_fk: Int!
+  professional_fk: Int!
   value: Float
 }
