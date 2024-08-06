@@ -28,8 +28,8 @@ export class Order {
     @Field(() => String, { nullable: true })
     diagnosis?: string;
 
-    @Field(() => [OrderDetail], { nullable: true })
-    orderDetail?: OrderDetail[];
+    // @Field(() => [OrderDetail], { nullable: true })
+    // orderDetail?: OrderDetail[];
 
     @Field(() => String, { nullable: true })
     deleted_at?: Date;

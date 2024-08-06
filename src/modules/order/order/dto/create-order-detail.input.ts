@@ -1,14 +1,15 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsInt, IsNumber, IsOptional, IsPositive, IsString, Matches, Max, Min } from 'class-validator';
+import { IsDate, IsInt, IsNumber, IsOptional, IsPositive, IsString, Matches, Max, Min } from 'class-validator';
 
 @InputType()
 export class CreateOrderDetailInput {
 
-    @Field(() => Int)
+    @Field(() => Int, { nullable: true })
+    @IsOptional()
     @IsInt()
     @IsPositive()
     @Max(2147483647)
-    order_fk: number;
+    order_fk?: number;
 
     @Field(() => Int, { nullable: true })
     @IsOptional()
@@ -18,53 +19,53 @@ export class CreateOrderDetailInput {
     professional_fk?: number;
 
     @Field(() => Date)
-    @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'La fecha debe estar en el formato "YYYY-MM-DD"' })
+    @IsDate()
     start_date: Date;
     
     @Field(() => Date)
-    @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'La fecha debe estar en el formato "YYYY-MM-DD"' })
+    @IsDate()
     finish_date: Date;
     
     @Field(() => Int, { nullable: true })
     @IsOptional()
     @IsInt()
-    @IsPositive()
+    @Min(0)
     @Max(31)
     total_sessions: number = 0;
     
     @Field(() => Int, { nullable: true })
     @IsOptional()
     @IsInt()
-    @IsPositive()
-    session: number = 0;
+    @Min(0)
+    sessions: number = 0;
 
     @Field(() => Int, { nullable: true })
     @IsOptional()
     @IsOptional()
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     coinsurance: number = 0
     
     @Field(() => Int, { nullable: true })
     @IsOptional()
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     value: number = 0
     
     @Field(() => Int, { nullable: true })
     @IsOptional()
     @IsNumber()
-    @IsPositive()
+    @Min(0)
     cost: number = 0
     
     @Field(() => Date, { nullable: true })
     @IsOptional()
-    @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'La fecha debe estar en el formato "YYYY-MM-DD"' })
+    @IsDate()
     started_at?: Date
     
     @Field(() => Date, { nullable: true })
     @IsOptional()
-    @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'La fecha debe estar en el formato "YYYY-MM-DD"' })
+    @IsDate()
     finished_at?: Date
 
     @Field(() => String, { nullable: true })

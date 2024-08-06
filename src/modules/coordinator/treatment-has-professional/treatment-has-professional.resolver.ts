@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Float } from '@nestjs/graphql';
 import { TreatmentHasProfessional } from './entities/treatment-has-professional.entity';
 import { CreateTreatmentHasProfessionalInput, UpdateTreatmentHasProfessionalInput, CompositeIdTreatmentInput } from './dto';
 import { Inject } from '@nestjs/common';
@@ -20,11 +20,11 @@ export class TreatmentHasProfessionalResolver {
     ) {}
 
     @Auth(user_types.client)
-    @Query(() => TreatmentHasProfessional, { name: 'findTreatmentHasProfessional' })
+    @Query(() => Float, { name: 'findTreatmentHasProfessional' })
     async findTreatmentHasProfessional(
         @CurrentUser() user: User,
         @Args('compositeIdTreatmentInput') compositeIdTreatmentInput: CompositeIdTreatmentInput,
-    ): Promise<TreatmentHasProfessional> {
+    ): Promise<Number> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
@@ -33,7 +33,7 @@ export class TreatmentHasProfessionalResolver {
             catchError(error => {
                 throw new RpcException(error)
             })
-        ) as unknown as TreatmentHasProfessional;
+        ) as unknown as Number;
     }
 
     @Auth(user_types.client)

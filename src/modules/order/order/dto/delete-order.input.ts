@@ -10,5 +10,4 @@ export class DeleteOrderInput extends PickType(UpdateOrderInput, ['order_id', 'u
     @IsPositive()
     @Max(2147483647)
     order_id: number;
-
 }
