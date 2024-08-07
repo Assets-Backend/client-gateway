@@ -13,6 +13,12 @@ export class User {
     user_id: number;
 
     @Field(() => String)
+    name: string;
+
+    @Field(() => String)
+    last_name: string;
+
+    @Field(() => String)
     email: string
 
     @Field(() => String, { nullable: true })

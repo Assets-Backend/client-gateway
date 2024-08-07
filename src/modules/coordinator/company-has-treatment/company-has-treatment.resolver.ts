@@ -36,11 +36,11 @@ export class CompanyHasTreatmentResolver {
     }
 
     @Auth(user_types.client)
-    @Query(() => Float, { name: 'findCompanyHasTreatment' })
+    @Query(() => CompanyHasTreatment, { name: 'findCompanyHasTreatment' })
     async findCompanyHasTreatment(
         @CurrentUser() user: User,
         @Args('compositeIdCompanyInput') compositeIdCompanyInput: CompositeIdCompanyInput,
-    ): Promise<Number> {
+    ): Promise<CompanyHasTreatment> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
@@ -49,7 +49,7 @@ export class CompanyHasTreatmentResolver {
             catchError(error => {
                 throw new RpcException(error)
             })
-        ) as unknown as Number;
+        ) as unknown as CompanyHasTreatment;
     }
 
     @Auth(user_types.client)

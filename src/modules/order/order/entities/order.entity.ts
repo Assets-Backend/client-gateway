@@ -1,5 +1,4 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { OrderDetail } from './order-detail.entity';
 
 @ObjectType()
 export class Order {

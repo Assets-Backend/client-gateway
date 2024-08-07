@@ -10,6 +10,6 @@ export class UpdateOrderInput extends PartialType(CreateOrderInput) {
     @IsPositive()
     @Max(2147483647)
     order_id: number;
-
+    
     updated_by: number;
 }

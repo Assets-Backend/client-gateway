@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { Order } from './entities/order.entity';
-import { CreateOrderInput, UpdateOrderInput, DeleteOrderInput, CreateOrderDetailInput } from './dto';
+import { CreateOrderInput, UpdateOrderInput, DeleteOrderInput } from './dto';
 import { Inject, ParseIntPipe } from '@nestjs/common';
 import { NATS_SERVICE } from 'src/config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
@@ -11,7 +11,6 @@ import { User } from 'src/modules/auth/entities/user.entity';
 import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 import { catchError } from 'rxjs';
 import { PaginationArgs } from 'src/common/dto';
-import { OrderDetail } from './entities';
 
 @Resolver(() => Order)
 export class OrderResolver {
@@ -37,35 +36,37 @@ export class OrderResolver {
     }
 
     @Auth(user_types.client)
-    @Mutation(() => OrderDetail, { name: 'createOrderDetail' })
-    async createOrderDetail(
+    @Query(() => [Order], { name: 'findOrdersByCompany' })
+    async findOrdersByCompany(
         @CurrentUser() user: User,
-        @Args('createOrderDetailInput') createOrderDetailInput: CreateOrderDetailInput
-    ): Promise<OrderDetail> {
+        @Args('company_fk', { type: () => Int }, ParseIntPipe) company_fk: Order['company_fk'],
+        @Args() paginationArgs: PaginationArgs,
+    ): Promise<Order[]> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
-        return this.client.send('order.create.orderDetail', {currentClient, createOrderDetailDto: createOrderDetailInput}).pipe(
+        return this.client.send('order.find.orders', {currentClient, whereInput: {company_fk}, paginationDto: paginationArgs}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })
-        ) as unknown as OrderDetail;
+        ) as unknown as Order[];
     }
 
     @Auth(user_types.client)
-    @Query(() => OrderDetail, { name: 'findOrder' })
-    async findOrder(
+    @Query(() => [Order], { name: 'findOrdersByPatient' })
+    async findOrdersByPatient(
         @CurrentUser() user: User,
-        @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetail['detail_id'],
-    ): Promise<OrderDetail> {
+        @Args('patient_fk', { type: () => Int }, ParseIntPipe) patient_fk: Order['patient_fk'],
+        @Args() paginationArgs: PaginationArgs,
+    ): Promise<Order[]> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
-        return this.client.send('order.find.order', {currentClient, detail_id}).pipe(
+        return this.client.send('order.find.orders', {currentClient, whereInput: {patient_fk}, paginationDto: paginationArgs}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })
-        ) as unknown as OrderDetail;
+        ) as unknown as Order[];
     }
 
     @Auth(user_types.client)

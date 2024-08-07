@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
 import { Company } from './entities/company.entity';
 import { CreateCompanyInput, UpdateCompanyInput, DeleteCompanyInput } from './dto';
 import { Inject, ParseIntPipe } from '@nestjs/common';
@@ -97,5 +97,37 @@ export class CompanyResolver {
                 throw new RpcException(error)
             })
         ) as unknown as Company;
+    }
+
+    @Auth(user_types.client)
+    @ResolveField(() => Int, {name: 'totalPatients'})
+    async totalPatients(
+        @Parent() company: Company
+    ): Promise<number> {
+
+        const { company_id } = company;
+            
+        return this.client.send('coordinator.totalPatients.patients', { company_id }).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as number;
+
+    }
+
+    @Auth(user_types.client)
+    @ResolveField(() => Int, {name: 'totalOrders'})
+    async totalOrders(
+        @Parent() company: Company
+    ): Promise<number> {
+
+        const { company_id } = company;
+            
+        return this.client.send('order.totalOrders.orderDetail', { company_id }).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as number;
+
     }
 }

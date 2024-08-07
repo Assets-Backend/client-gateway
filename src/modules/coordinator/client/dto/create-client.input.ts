@@ -1,6 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsString, MaxLength, MinLength } from 'class-validator';
-import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 
 @InputType()
 export class CreateClientInput {

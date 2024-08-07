@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int, GraphQLISODateTime } from '@nestjs/graphql';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class OrderDetail {
@@ -39,10 +39,10 @@ export class OrderDetail {
     @Field(() => Int)
     cost: number
 
-    @Field(() => Date, { nullable: true })
+    @Field(() => String, { nullable: true })
     started_at?: Date
 
-    @Field(() => Date, { nullable: true })
+    @Field(() => String, { nullable: true })
     finished_at?: Date
 
     @Field(() => String, { nullable: true })

@@ -1,7 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsInt, IsOptional, IsPositive, IsString, Max, Min, ValidateNested } from 'class-validator';
-import { CreateOrderDetailInput } from './create-order-detail.input';
-import { Type } from 'class-transformer';
+import { IsInt, IsOptional, IsPositive, IsString, Max, Min } from 'class-validator';
 
 @InputType()
 export class CreateOrderInput {
@@ -36,9 +34,9 @@ export class CreateOrderInput {
     diagnosis?: string;
     
     // El decorador "ValidateNested" permite validar cada uno de los objetos del array con los decoradores de la clase OrderItemDto
-    @Field(() => CreateOrderDetailInput, { nullable: true })
-    @IsOptional()
-    @ValidateNested()
-    @Type(() => CreateOrderDetailInput)
-    order_detail?: CreateOrderDetailInput
+    // @Field(() => CreateOrderDetailInput, { nullable: true })
+    // @IsOptional()
+    // @ValidateNested()
+    // @Type(() => CreateOrderDetailInput)
+    // order_detail?: CreateOrderDetailInput
 }

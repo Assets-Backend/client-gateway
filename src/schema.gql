@@ -10,6 +10,8 @@ type ClientIds {
 type User {
   id: ID!
   user_id: Int!
+  name: String!
+  last_name: String!
   email: String!
   phone: String
   roles: [user_types!]!
@@ -82,6 +84,8 @@ type Company {
   deleted_at: String
   updated_at: String!
   created_at: String!
+  totalPatients: Int!
+  totalOrders: Int!
 }
 
 type Treatment {
@@ -144,17 +148,12 @@ type OrderDetail {
   coinsurance: Int!
   value: Int!
   cost: Int!
-  started_at: DateTime
-  finished_at: DateTime
+  started_at: String
+  finished_at: String
   requirements: String
   updated_at: String!
   created_at: String!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Query {
   revalidateToken: AuthResponse!
@@ -167,12 +166,15 @@ type Query {
   findCompanies(offset: Int = 0, limit: Int = 10): [Company!]!
   findTreatment(treatment_id: Int!): Treatment!
   findTreatments(offset: Int = 0, limit: Int = 10): [Treatment!]!
-  findCompanyHasTreatment(compositeIdCompanyInput: CompositeIdCompanyInput!): Float!
+  findCompanyHasTreatment(compositeIdCompanyInput: CompositeIdCompanyInput!): CompanyHasTreatment!
   findCompanyHasTreatments(offset: Int = 0, limit: Int = 10): [CompanyHasTreatment!]!
-  findTreatmentHasProfessional(compositeIdTreatmentInput: CompositeIdTreatmentInput!): Float!
+  findTreatmentHasProfessional(compositeIdTreatmentInput: CompositeIdTreatmentInput!): TreatmentHasProfessional!
   findTreatmentHasProfessionals(offset: Int = 0, limit: Int = 10): [TreatmentHasProfessional!]!
-  findOrder(detail_id: Int!): OrderDetail!
+  findOrdersByCompany(company_fk: Int!, offset: Int = 0, limit: Int = 10): [Order!]!
+  findOrdersByPatient(patient_fk: Int!, offset: Int = 0, limit: Int = 10): [Order!]!
   findOrders(offset: Int = 0, limit: Int = 10): [Order!]!
+  findOrderDetail(detail_id: Int!): OrderDetail!
+  findOrderDetails(order_fk: Int!, offset: Int = 0, limit: Int = 10): [OrderDetail!]!
 }
 
 input CompositeIdCompanyInput {
@@ -207,9 +209,11 @@ type Mutation {
   updateTreatmentHasProfessional(updateTreatmentHasProfessionalInput: UpdateTreatmentHasProfessionalInput!): TreatmentHasProfessional!
   deleteTreatmentHasProfessional(compositeIdTreatmentInput: CompositeIdTreatmentInput!): TreatmentHasProfessional!
   createOrder(createOrderInput: CreateOrderInput!): Order!
-  createOrderDetail(createOrderDetailInput: CreateOrderDetailInput!): OrderDetail!
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
   deleteOrder(deleteOrderInput: DeleteOrderInput!): Order!
+  createOrderDetail(createOrderDetailInput: CreateOrderDetailInput!): OrderDetail!
+  updateOrderDetail(updateOrderDetailInput: UpdateOrderDetailInput!): OrderDetail!
+  finalizeOrder(deleteOrderDetailInput: DeleteOrderDetailInput!): OrderDetail!
 }
 
 input LoginInput {
@@ -320,22 +324,6 @@ input CreateOrderInput {
   treatment_fk: Int!
   frequency: Int!
   diagnosis: String
-  order_detail: CreateOrderDetailInput
-}
-
-input CreateOrderDetailInput {
-  order_fk: Int
-  professional_fk: Int
-  start_date: DateTime!
-  finish_date: DateTime!
-  total_sessions: Int = 0
-  sessions: Int = 0
-  coinsurance: Int = 0
-  value: Int = 0
-  cost: Int = 0
-  started_at: DateTime
-  finished_at: DateTime
-  requirements: String
 }
 
 input UpdateOrderInput {
@@ -344,10 +332,49 @@ input UpdateOrderInput {
   treatment_fk: Int
   frequency: Int
   diagnosis: String
-  order_detail: CreateOrderDetailInput
   order_id: Int!
 }
 
 input DeleteOrderInput {
   order_id: Int!
+}
+
+input CreateOrderDetailInput {
+  order_fk: Int!
+  professional_fk: Int
+  start_date: DateTime!
+  finish_date: DateTime!
+  total_sessions: Int
+  sessions: Int
+  coinsurance: Int
+  value: Int
+  cost: Int
+  started_at: DateTime
+  finished_at: DateTime
+  requirements: String
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input UpdateOrderDetailInput {
+  order_fk: Int
+  professional_fk: Int
+  start_date: DateTime
+  finish_date: DateTime
+  total_sessions: Int
+  sessions: Int
+  coinsurance: Int
+  value: Int
+  cost: Int
+  started_at: DateTime
+  finished_at: DateTime
+  requirements: String
+  detail_id: Int!
+}
+
+input DeleteOrderDetailInput {
+  detail_id: Int!
 }
