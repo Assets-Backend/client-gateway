@@ -7,3 +7,4 @@ export { CompanyHasTreatmentModule } from "./coordinator/company-has-treatment/c
 export { TreatmentHasProfessionalModule } from "./coordinator/treatment-has-professional/treatment-has-professional.module";
 export { OrderModule } from "./order/order/order.module";
 export { OrderDetailModule } from "./order/order_detail/order_detail.module";
+export { ClaimModule } from "./order/claim/claim.module";

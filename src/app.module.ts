@@ -13,7 +13,8 @@ import {
     CompanyHasTreatmentModule,
     TreatmentHasProfessionalModule,
     OrderModule,
-    OrderDetailModule
+    OrderDetailModule,
+    ClaimModule
 } from './modules';
 
 @Module({
@@ -37,6 +38,7 @@ import {
         TreatmentHasProfessionalModule,
         OrderModule,
         OrderDetailModule,
+        ClaimModule,
     ],
     controllers: [],
     providers: [],

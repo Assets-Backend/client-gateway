@@ -155,6 +155,26 @@ type OrderDetail {
   created_at: String!
 }
 
+type Claim {
+  claim_id: Int!
+  detail_fk: Int!
+  client_fk: Int!
+  updated_by: Int!
+  cause: String!
+  urgency: urgency_options!
+  reported_date: String!
+  deleted_at: String
+  updated_at: String!
+  created_at: String!
+}
+
+"""Enumeración que representa los tipos de emergencia para el reclamo."""
+enum urgency_options {
+  high
+  medium
+  low
+}
+
 type Query {
   revalidateToken: AuthResponse!
   Client: Client!
@@ -175,6 +195,9 @@ type Query {
   findOrders(offset: Int = 0, limit: Int = 10): [Order!]!
   findOrderDetail(detail_id: Int!): OrderDetail!
   findOrderDetails(order_fk: Int!, offset: Int = 0, limit: Int = 10): [OrderDetail!]!
+  findClaim(claim_id: Int!): Claim!
+  findClaimsByDetail(detail_fk: Int!, offset: Int = 0, limit: Int = 10): [Claim!]!
+  findClaims(offset: Int = 0, limit: Int = 10): [Claim!]!
 }
 
 input CompositeIdCompanyInput {
@@ -214,6 +237,9 @@ type Mutation {
   createOrderDetail(createOrderDetailInput: CreateOrderDetailInput!): OrderDetail!
   updateOrderDetail(updateOrderDetailInput: UpdateOrderDetailInput!): OrderDetail!
   finalizeOrder(deleteOrderDetailInput: DeleteOrderDetailInput!): OrderDetail!
+  createClaim(createClaimInput: CreateClaimInput!): Claim!
+  updateClaim(updateClaimInput: UpdateClaimInput!): Claim!
+  deleteClaim(deleteClaimInput: DeleteClaimInput!): Claim!
 }
 
 input LoginInput {
@@ -377,4 +403,23 @@ input UpdateOrderDetailInput {
 
 input DeleteOrderDetailInput {
   detail_id: Int!
+}
+
+input CreateClaimInput {
+  detail_fk: Int!
+  cause: String!
+  urgency: urgency_options!
+  reported_date: DateTime!
+}
+
+input UpdateClaimInput {
+  detail_fk: Int
+  cause: String
+  urgency: urgency_options
+  reported_date: DateTime
+  claim_id: Int!
+}
+
+input DeleteClaimInput {
+  claim_id: Int!
 }
