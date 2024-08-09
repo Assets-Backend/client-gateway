@@ -2,8 +2,10 @@ import { InputType, Int, Field } from '@nestjs/graphql';
 import { IsDate, IsInt, IsNumber, IsOptional, IsPositive, IsString, Max, Min } from 'class-validator';
 
 @InputType()
-export class CreateOrderDetailInput {
+export class CreateDetailInput {
 
+    updated_by: number;
+    
     @Field(() => Int)
     @IsInt()
     @IsPositive()

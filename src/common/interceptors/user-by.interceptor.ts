@@ -1,7 +1,6 @@
 import { Injectable, ExecutionContext, CallHandler, NestInterceptor } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
-import { User } from 'src/modules/auth/entities/user.entity';
 
 @Injectable()
 export class UserByInterceptor implements NestInterceptor {
@@ -12,7 +11,7 @@ export class UserByInterceptor implements NestInterceptor {
         const args = ctx.getArgs()
 
         const input = Object.keys(args)[0]
-        const user:User = req.user
+        const user = req.user
         
         const operation = ctx.getInfo().parentType.name
         

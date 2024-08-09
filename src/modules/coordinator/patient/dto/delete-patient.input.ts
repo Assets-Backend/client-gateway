@@ -10,5 +10,4 @@ export class DeletePatientInput extends PickType(UpdatePatientInput, ['patient_i
     @IsPositive()
     @Max(2147483647)
     patient_id: number;
-
 }

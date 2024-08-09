@@ -1,16 +1,17 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { OrderDetail } from './entities/order-detail.entity';
-import { CreateOrderDetailInput, DeleteOrderDetailInput, UpdateOrderDetailInput } from './dto';
+import { CreateDetailInput, DeleteDetailInput, UpdateDetailInput } from './dto';
 import { Inject, ParseIntPipe } from '@nestjs/common';
 import { NATS_SERVICE } from 'src/config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { Auth } from 'src/modules/auth/decorators/composition/auth.decorator';
 import { user_types } from 'src/modules/auth/enums/user_types.enum';
 import { CurrentUser } from 'src/modules/auth/decorators';
-import { User } from 'src/modules/auth/entities/user.entity';
 import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 import { catchError } from 'rxjs';
 import { PaginationArgs } from 'src/common/dto';
+import { AuthClient } from 'src/modules/auth/auth-client/entities/auth-client.entity';
+import { AuthProfessional } from 'src/modules/auth/auth-professional/entities/auth-professional.entity';
 
 @Resolver(() => OrderDetail)
 export class OrderDetailResolver {
@@ -20,15 +21,15 @@ export class OrderDetailResolver {
     ) {}
 
     @Auth(user_types.client)
-    @Mutation(() => OrderDetail, { name: 'createOrderDetail' })
-    async createOrderDetail(
-        @CurrentUser() user: User,
-        @Args('createOrderDetailInput') createOrderDetailInput: CreateOrderDetailInput
+    @Mutation(() => OrderDetail, { name: 'createDetail' })
+    async create(
+        @CurrentUser() user: AuthClient,
+        @Args('createDetailInput') createDetailInput: CreateDetailInput
     ): Promise<OrderDetail> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
-        return this.client.send('order.create.orderDetail', {currentClient, createOrderDetailDto: createOrderDetailInput}).pipe(
+        return this.client.send('order.create.detail', {currentClient, createDetailDto: createDetailInput}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })
@@ -36,15 +37,15 @@ export class OrderDetailResolver {
     }
 
     @Auth(user_types.client)
-    @Query(() => OrderDetail, { name: 'findOrderDetail' })
-    async findOrder(
-        @CurrentUser() user: User,
+    @Query(() => OrderDetail, { name: 'findDetail' })
+    async find(
+        @CurrentUser() user: AuthClient,
         @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetail['detail_id'],
     ): Promise<OrderDetail> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
-        return this.client.send('order.find.orderDetail', {currentClient, detail_id}).pipe(
+        return this.client.send('order.find.detail', {currentClient, detail_id}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })
@@ -52,16 +53,16 @@ export class OrderDetailResolver {
     }
 
     @Auth(user_types.client)
-    @Query(() => [OrderDetail], { name: 'findOrderDetails' })
-    async findOrderDetails(
-        @CurrentUser() user: User,
+    @Query(() => [OrderDetail], { name: 'findDetailsByOrder' })
+    async findDetailsByOrder(
+        @CurrentUser() user: AuthClient,
         @Args('order_fk', { type: () => Int }, ParseIntPipe) order_fk: OrderDetail['order_fk'],
         @Args() paginationArgs: PaginationArgs,
     ): Promise<OrderDetail[]> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
-        return this.client.send('order.find.orderDetails', {currentClient, whereInput: {order_fk}, paginationDto: paginationArgs}).pipe(
+        return this.client.send('order.findAll.details', {currentClient, whereInput: {order_fk}, paginationDto: paginationArgs}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })
@@ -69,15 +70,15 @@ export class OrderDetailResolver {
     }
 
     @Auth(user_types.client)
-    @Mutation(() => OrderDetail, { name: 'updateOrderDetail' })
-    async updateOrderDetail(
-        @CurrentUser() user: User,
-        @Args('updateOrderDetailInput') updateOrderDetailInput: UpdateOrderDetailInput
+    @Mutation(() => OrderDetail, { name: 'updateDetail' })
+    async update(
+        @CurrentUser() user: AuthClient,
+        @Args('updateDetailInput') updateDetailInput: UpdateDetailInput
     ): Promise<OrderDetail> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
-        return this.client.send('order.update.orderDetail', {currentClient, updateOrderDetailDto: updateOrderDetailInput}).pipe(
+        return this.client.send('order.update.detail', {currentClient, updateDetailDto: updateDetailInput}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })
@@ -85,15 +86,31 @@ export class OrderDetailResolver {
     }
 
     @Auth(user_types.client)
-    @Mutation(() => OrderDetail, { name: 'finalizeOrder' })
-    async finalizeOrder(
-        @CurrentUser() user: User,
-        @Args('deleteOrderDetailInput') deleteOrderDetailInput: DeleteOrderDetailInput
+    @Mutation(() => OrderDetail, { name: 'finalizeDetail' })
+    async finalizeDetail(
+        @CurrentUser() user: AuthClient,
+        @Args('deleteDetailInput') deleteDetailInput: DeleteDetailInput
     ): Promise<OrderDetail> {
 
         const { current_client: currentClient }: { current_client: ClientIds } = user;
 
-        return this.client.send('order.finalize.orderDetail', {currentClient, deleteOrderDetailDto: deleteOrderDetailInput}).pipe(
+        return this.client.send('order.finalize.detail', {currentClient, deleteDetailDto: deleteDetailInput}).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as OrderDetail;
+    }
+
+    @Auth(user_types.professional)
+    @Mutation(() => OrderDetail, { name: 'acceptDetail' })
+    async deletePatient(
+        @CurrentUser() user: AuthProfessional,
+        @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetail['detail_id'],
+    ): Promise<OrderDetail> {
+
+        const { user_id: professional_id } = user
+
+        return this.client.send('order.accept.detail', {professional_id, detail_id}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })

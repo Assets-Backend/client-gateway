@@ -7,10 +7,10 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { Auth } from 'src/modules/auth/decorators/composition/auth.decorator';
 import { user_types } from 'src/modules/auth/enums/user_types.enum';
 import { CurrentUser } from 'src/modules/auth/decorators';
-import { User } from 'src/modules/auth/entities/user.entity';
 import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 import { catchError } from 'rxjs';
 import { PaginationArgs } from 'src/common/dto';
+import { AuthClient } from 'src/modules/auth/auth-client/entities/auth-client.entity';
 
 @Resolver(() => Patient)
 export class PatientResolver {
@@ -22,7 +22,7 @@ export class PatientResolver {
     @Auth(user_types.client)
     @Mutation(() => Patient, { name: 'createPatient' })
     async createPatient(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('createPatientInput') createPatientInput: CreatePatientInput
     ): Promise<Patient> {
 
@@ -38,7 +38,7 @@ export class PatientResolver {
     @Auth(user_types.client)
     @Query(() => Patient, { name: 'findPatient' })
     async findPatient(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('patient_id', { type: () => Int }, ParseIntPipe) patient_id: Patient['patient_id'],
     ): Promise<Patient> {
 
@@ -54,7 +54,7 @@ export class PatientResolver {
     @Auth(user_types.client)
     @Query(() => [Patient], { name: 'findPatientsByCompany' })
     async findPatientsByCompany(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('company_fk', { type: () => Int }, ParseIntPipe) company_fk: Patient['company_fk'],
         @Args() paginationArgs: PaginationArgs,
     ): Promise<Patient[]> {
@@ -71,7 +71,7 @@ export class PatientResolver {
     @Auth(user_types.client)
     @Query(() => [Patient], { name: 'findPatients' })
     async findPatients(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args() paginationArgs: PaginationArgs,
     ): Promise<Patient[]> {
 
@@ -87,7 +87,7 @@ export class PatientResolver {
     @Auth(user_types.client)
     @Mutation(() => Patient, { name: 'updatePatient' })
     async updatePatient(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('updatePatientInput') updatePatientInput: UpdatePatientInput
     ): Promise<Patient> {
 
@@ -103,7 +103,7 @@ export class PatientResolver {
     @Auth(user_types.clientAdmin)
     @Mutation(() => Patient, { name: 'deletePatient' })
     async deletePatient(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('deletePatientInput') deletePatientInput: DeletePatientInput
     ): Promise<Patient> {
 

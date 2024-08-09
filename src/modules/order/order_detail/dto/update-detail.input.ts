@@ -1,9 +1,9 @@
 import { IsInt, IsNumber, IsOptional, IsPositive, Max, Min } from 'class-validator';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
-import { CreateOrderDetailInput } from './create-order-detail.input';
+import { CreateDetailInput } from './create-detail.input';
 
 @InputType()
-export class UpdateOrderDetailInput extends PartialType(CreateOrderDetailInput) {
+export class UpdateDetailInput extends PartialType(CreateDetailInput) {
 
     updated_by: number;
 

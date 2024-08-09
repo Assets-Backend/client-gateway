@@ -10,5 +10,4 @@ export class DeleteTreatmentInput extends PickType(UpdateTreatmentInput, ['treat
     @IsPositive()
     @Max(2147483647)
     treatment_id: number;
-
 }

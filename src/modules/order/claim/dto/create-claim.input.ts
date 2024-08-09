@@ -5,6 +5,8 @@ import { urgency_options } from 'src/common/enums/urgency_options.enum';
 @InputType()
 export class CreateClaimInput {
 
+    updated_by: number;
+    
     @Field(() => Int)
     @IsInt()
     @IsPositive()

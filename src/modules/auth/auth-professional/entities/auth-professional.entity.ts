@@ -1,10 +1,9 @@
-import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
+import { user_types } from '../../enums/user_types.enum';
 import { gender_options } from 'src/common/enums';
-import { ClientIds } from 'src/common/interfaces/client-ids.interface';
-import { user_types } from 'src/modules/auth/enums/user_types.enum';
 
 @ObjectType()
-export class User {
+export class AuthProfessional {
 
     @Field(() => ID)
     id: string;
@@ -32,9 +31,6 @@ export class User {
     @Field(() => gender_options)
     gender: gender_options;
     
-    @Field(() => ClientIds, { nullable: true })
-    current_client: ClientIds
-
     @Field(() => String, { nullable: true })
     deleted_at?: Date;
 

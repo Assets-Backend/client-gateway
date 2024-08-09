@@ -1,4 +1,5 @@
-export { AuthModule } from "./auth/auth.module";
+export { AuthClientModule } from "./auth/auth-client/auth-client.module";
+export { AuthProfessionalModule } from "./auth/auth-professional/auth-professional.module";
 export { ClientModule } from "./coordinator/client/client.module";
 export { PatientModule } from "./coordinator/patient/patient.module";
 export { CompanyModule } from "./coordinator/company/company.module";
@@ -8,3 +9,4 @@ export { TreatmentHasProfessionalModule } from "./coordinator/treatment-has-prof
 export { OrderModule } from "./order/order/order.module";
 export { OrderDetailModule } from "./order/order_detail/order_detail.module";
 export { ClaimModule } from "./order/claim/claim.module";
+export { ProfessionalModule } from "./professional/professional/professional.module";

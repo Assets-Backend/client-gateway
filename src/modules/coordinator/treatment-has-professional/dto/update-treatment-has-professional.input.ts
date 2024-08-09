@@ -5,6 +5,8 @@ import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 @InputType()
 export class UpdateTreatmentHasProfessionalInput extends PartialType(CreateTreatmentHasProfessionalInput) {
 
+    updated_by: number;
+
     @Field(() => Int)
     @IsInt()
     @IsPositive()
@@ -22,6 +24,4 @@ export class UpdateTreatmentHasProfessionalInput extends PartialType(CreateTreat
     @IsPositive()
     @Max(2147483647)
     professional_fk: number;
-
-    updated_by: number;
 }

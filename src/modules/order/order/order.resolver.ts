@@ -7,10 +7,10 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { Auth } from 'src/modules/auth/decorators/composition/auth.decorator';
 import { user_types } from 'src/modules/auth/enums/user_types.enum';
 import { CurrentUser } from 'src/modules/auth/decorators';
-import { User } from 'src/modules/auth/entities/user.entity';
 import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 import { catchError } from 'rxjs';
 import { PaginationArgs } from 'src/common/dto';
+import { AuthClient } from 'src/modules/auth/auth-client/entities/auth-client.entity';
 
 @Resolver(() => Order)
 export class OrderResolver {
@@ -22,7 +22,7 @@ export class OrderResolver {
     @Auth(user_types.client)
     @Mutation(() => Order, { name: 'createOrder' })
     async createOrder(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('createOrderInput') createOrderInput: CreateOrderInput
     ): Promise<Order> {
 
@@ -38,7 +38,7 @@ export class OrderResolver {
     @Auth(user_types.client)
     @Query(() => [Order], { name: 'findOrdersByCompany' })
     async findOrdersByCompany(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('company_fk', { type: () => Int }, ParseIntPipe) company_fk: Order['company_fk'],
         @Args() paginationArgs: PaginationArgs,
     ): Promise<Order[]> {
@@ -55,7 +55,7 @@ export class OrderResolver {
     @Auth(user_types.client)
     @Query(() => [Order], { name: 'findOrdersByPatient' })
     async findOrdersByPatient(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('patient_fk', { type: () => Int }, ParseIntPipe) patient_fk: Order['patient_fk'],
         @Args() paginationArgs: PaginationArgs,
     ): Promise<Order[]> {
@@ -72,7 +72,7 @@ export class OrderResolver {
     @Auth(user_types.client)
     @Query(() => [Order], { name: 'findOrders' })
     async findOrders(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args() paginationArgs: PaginationArgs,
     ): Promise<Order[]> {
 
@@ -88,7 +88,7 @@ export class OrderResolver {
     @Auth(user_types.client)
     @Mutation(() => Order, { name: 'updateOrder' })
     async updateOrder(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('updateOrderInput') updateOrderInput: UpdateOrderInput
     ): Promise<Order> {
 
@@ -104,7 +104,7 @@ export class OrderResolver {
     @Auth(user_types.clientAdmin)
     @Mutation(() => Order, { name: 'deleteOrder' })
     async deleteOrder(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('deleteOrderInput') deleteOrderInput: DeleteOrderInput
     ): Promise<Order> {
 

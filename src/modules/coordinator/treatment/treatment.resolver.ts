@@ -7,10 +7,10 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { Auth } from 'src/modules/auth/decorators/composition/auth.decorator';
 import { user_types } from 'src/modules/auth/enums/user_types.enum';
 import { CurrentUser } from 'src/modules/auth/decorators';
-import { User } from 'src/modules/auth/entities/user.entity';
 import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 import { catchError } from 'rxjs';
 import { PaginationArgs } from 'src/common/dto';
+import { AuthClient } from 'src/modules/auth/auth-client/entities/auth-client.entity';
 
 @Resolver(() => Treatment)
 export class TreatmentResolver {
@@ -22,7 +22,7 @@ export class TreatmentResolver {
     @Auth(user_types.clientAdmin)
     @Mutation(() => Treatment, { name: 'createTreatment' })
     async createTreatment(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('createTreatmentInput') createTreatmentInput: CreateTreatmentInput
     ): Promise<Treatment> {
 
@@ -38,7 +38,7 @@ export class TreatmentResolver {
     @Auth(user_types.client)
     @Query(() => Treatment, { name: 'findTreatment' })
     async findTreatment(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('treatment_id', { type: () => Int }, ParseIntPipe) treatment_id: Treatment['treatment_id'],
     ): Promise<Treatment> {
 
@@ -54,7 +54,7 @@ export class TreatmentResolver {
     @Auth(user_types.client)
     @Query(() => [Treatment], { name: 'findTreatments' })
     async findTreatments(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args() paginationArgs: PaginationArgs,
     ): Promise<Treatment[]> {
 
@@ -70,7 +70,7 @@ export class TreatmentResolver {
     @Auth(user_types.client)
     @Mutation(() => Treatment, { name: 'updateTreatment' })
     async updateTreatment(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('updateTreatmentInput') updateTreatmentInput: UpdateTreatmentInput
     ): Promise<Treatment> {
 
@@ -86,7 +86,7 @@ export class TreatmentResolver {
     @Auth(user_types.clientAdmin)
     @Mutation(() => Treatment, { name: 'deleteTreatment' })
     async deleteTreatment(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('deleteTreatmentInput') deleteTreatmentInput: DeleteTreatmentInput
     ): Promise<Treatment> {
 

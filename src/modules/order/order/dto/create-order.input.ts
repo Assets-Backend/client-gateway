@@ -4,6 +4,8 @@ import { IsInt, IsOptional, IsPositive, IsString, Max, Min } from 'class-validat
 @InputType()
 export class CreateOrderInput {
 
+    updated_by: number;
+    
     @Field(() => Int)
     @IsInt()
     @IsPositive()

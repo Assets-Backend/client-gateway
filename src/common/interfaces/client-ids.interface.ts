@@ -1,12 +1,12 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { User } from "src/modules/auth/entities/user.entity";
+import { AuthClient } from "src/modules/auth/auth-client/entities/auth-client.entity";
 
 @ObjectType()
 export class ClientIds {
 
     @Field(() => String)
-    mongo_id: User['id'];
+    mongo_id: AuthClient['id'];
 
     @Field(() => Number)
-    client_id: User['user_id'];
+    client_id: AuthClient['user_id'];
 }

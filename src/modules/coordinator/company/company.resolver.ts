@@ -7,10 +7,10 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { Auth } from 'src/modules/auth/decorators/composition/auth.decorator';
 import { user_types } from 'src/modules/auth/enums/user_types.enum';
 import { CurrentUser } from 'src/modules/auth/decorators';
-import { User } from 'src/modules/auth/entities/user.entity';
 import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 import { catchError } from 'rxjs';
 import { PaginationArgs } from 'src/common/dto';
+import { AuthClient } from 'src/modules/auth/auth-client/entities/auth-client.entity';
 
 @Resolver(() => Company)
 export class CompanyResolver {
@@ -22,7 +22,7 @@ export class CompanyResolver {
     @Auth(user_types.clientAdmin)
     @Mutation(() => Company, { name: 'createCompany' })
     async createCompany(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('createCompanyInput') createCompanyInput: CreateCompanyInput
     ): Promise<Company> {
 
@@ -38,7 +38,7 @@ export class CompanyResolver {
     @Auth(user_types.client)
     @Query(() => Company, { name: 'findCompany' })
     async findCompany(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('company_id', { type: () => Int }, ParseIntPipe) company_id: Company['company_id'],
     ): Promise<Company> {
 
@@ -54,7 +54,7 @@ export class CompanyResolver {
     @Auth(user_types.client)
     @Query(() => [Company], { name: 'findCompanies' })
     async findCompanies(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args() paginationArgs: PaginationArgs,
     ): Promise<Company[]> {
 
@@ -70,7 +70,7 @@ export class CompanyResolver {
     @Auth(user_types.client)
     @Mutation(() => Company, { name: 'updateCompany' })
     async updateCompany(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('updateCompanyInput') updateCompanyInput: UpdateCompanyInput
     ): Promise<Company> {
 
@@ -86,7 +86,7 @@ export class CompanyResolver {
     @Auth(user_types.clientAdmin)
     @Mutation(() => Company, { name: 'deleteCompany' })
     async deleteCompany(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('deleteCompanyInput') deleteCompanyInput: DeleteCompanyInput
     ): Promise<Company> {
 
@@ -123,7 +123,7 @@ export class CompanyResolver {
 
         const { company_id } = company;
             
-        return this.client.send('order.totalOrders.orderDetail', { company_id }).pipe(
+        return this.client.send('order.totalOrders.detail', { company_id }).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })

@@ -1,9 +1,9 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
-import { IsEmail, IsEnum, IsNumber, IsOptional, IsPhoneNumber, IsPositive, IsString, IsStrongPassword, MaxLength, MinLength } from "class-validator";
-import { gender_options } from "src/common/enums";
+import { InputType, Field, Int } from '@nestjs/graphql';
+import { IsEmail, IsEnum, IsNumber, IsOptional, IsPhoneNumber, IsPositive, IsString, IsStrongPassword, MaxLength, MinLength } from 'class-validator';
+import { gender_options } from 'src/common/enums';
 
 @InputType()
-export class SignupInput {
+export class SignupClientInput {
 
     @Field( () => Int )
     @IsNumber()

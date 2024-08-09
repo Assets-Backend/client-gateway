@@ -7,7 +7,7 @@ type ClientIds {
   client_id: Float!
 }
 
-type User {
+type AuthClient {
   id: ID!
   user_id: Int!
   name: String!
@@ -40,9 +40,29 @@ enum gender_options {
   F
 }
 
-type AuthResponse {
+type ClientResponse {
   token: String!
-  user: User!
+  user: AuthClient!
+}
+
+type AuthProfessional {
+  id: ID!
+  user_id: Int!
+  name: String!
+  last_name: String!
+  email: String!
+  phone: String
+  roles: [user_types!]!
+  gender: gender_options!
+  deleted_at: String
+  last_login: String
+  updated_at: String!
+  created_at: String!
+}
+
+type ProfessionalResponse {
+  token: String!
+  user: AuthProfessional!
 }
 
 type Client {
@@ -175,8 +195,18 @@ enum urgency_options {
   low
 }
 
+type Professional {
+  professional_id: Int!
+  name: String!
+  last_name: String!
+  deleted_at: String
+  updated_at: String!
+  created_at: String!
+}
+
 type Query {
-  revalidateToken: AuthResponse!
+  revalidateTokenClient: ClientResponse!
+  revalidateTokenProfessional: ProfessionalResponse!
   Client: Client!
   findUsers(offset: Int = 0, limit: Int = 10): [Client!]!
   findPatient(patient_id: Int!): Patient!
@@ -193,11 +223,12 @@ type Query {
   findOrdersByCompany(company_fk: Int!, offset: Int = 0, limit: Int = 10): [Order!]!
   findOrdersByPatient(patient_fk: Int!, offset: Int = 0, limit: Int = 10): [Order!]!
   findOrders(offset: Int = 0, limit: Int = 10): [Order!]!
-  findOrderDetail(detail_id: Int!): OrderDetail!
-  findOrderDetails(order_fk: Int!, offset: Int = 0, limit: Int = 10): [OrderDetail!]!
+  findDetail(detail_id: Int!): OrderDetail!
+  findDetailsByOrder(order_fk: Int!, offset: Int = 0, limit: Int = 10): [OrderDetail!]!
   findClaim(claim_id: Int!): Claim!
   findClaimsByDetail(detail_fk: Int!, offset: Int = 0, limit: Int = 10): [Claim!]!
   findClaims(offset: Int = 0, limit: Int = 10): [Claim!]!
+  Professional: Professional!
 }
 
 input CompositeIdCompanyInput {
@@ -212,9 +243,9 @@ input CompositeIdTreatmentInput {
 }
 
 type Mutation {
-  Login(loginInput: LoginInput!): AuthResponse!
-  SignupClient(signupInput: SignupInput!): AuthResponse!
-  SignupProfessional(signupInput: SignupInput!): AuthResponse!
+  LoginClient(loginClientInput: LoginClientInput!): ClientResponse!
+  SignupProfessional(signupProfessionalInput: SignupProfessionalInput!): ProfessionalResponse!
+  LoginProfessional(loginProfessionalInput: LoginProfessionalInput!): ProfessionalResponse!
   updateUser(updateClientInput: UpdateClientInput!): Client!
   deleteUser(user_id: Int!): Client!
   createPatient(createPatientInput: CreatePatientInput!): Patient!
@@ -234,28 +265,35 @@ type Mutation {
   createOrder(createOrderInput: CreateOrderInput!): Order!
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
   deleteOrder(deleteOrderInput: DeleteOrderInput!): Order!
-  createOrderDetail(createOrderDetailInput: CreateOrderDetailInput!): OrderDetail!
-  updateOrderDetail(updateOrderDetailInput: UpdateOrderDetailInput!): OrderDetail!
-  finalizeOrder(deleteOrderDetailInput: DeleteOrderDetailInput!): OrderDetail!
+  createDetail(createDetailInput: CreateDetailInput!): OrderDetail!
+  updateDetail(updateDetailInput: UpdateDetailInput!): OrderDetail!
+  finalizeDetail(deleteDetailInput: DeleteDetailInput!): OrderDetail!
+  acceptDetail(detail_id: Int!): OrderDetail!
   createClaim(createClaimInput: CreateClaimInput!): Claim!
   updateClaim(updateClaimInput: UpdateClaimInput!): Claim!
   deleteClaim(deleteClaimInput: DeleteClaimInput!): Claim!
+  updateProfessional(updateProfessionalInput: UpdateProfessionalInput!): Professional!
 }
 
-input LoginInput {
+input LoginClientInput {
   email: String
   phone: String
   password: String!
 }
 
-input SignupInput {
-  user_id: Int!
+input SignupProfessionalInput {
   name: String!
   last_name: String!
   email: String!
   phone: String
   password: String!
   gender: gender_options!
+}
+
+input LoginProfessionalInput {
+  email: String
+  phone: String
+  password: String!
 }
 
 input UpdateClientInput {
@@ -365,7 +403,7 @@ input DeleteOrderInput {
   order_id: Int!
 }
 
-input CreateOrderDetailInput {
+input CreateDetailInput {
   order_fk: Int!
   professional_fk: Int
   start_date: DateTime!
@@ -385,7 +423,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-input UpdateOrderDetailInput {
+input UpdateDetailInput {
   order_fk: Int
   professional_fk: Int
   start_date: DateTime
@@ -401,7 +439,7 @@ input UpdateOrderDetailInput {
   detail_id: Int!
 }
 
-input DeleteOrderDetailInput {
+input DeleteDetailInput {
   detail_id: Int!
 }
 
@@ -422,4 +460,9 @@ input UpdateClaimInput {
 
 input DeleteClaimInput {
   claim_id: Int!
+}
+
+input UpdateProfessionalInput {
+  name: String
+  last_name: String
 }

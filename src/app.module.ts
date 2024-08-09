@@ -5,7 +5,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default'
 import { 
-    AuthModule,
+    AuthClientModule,
+    AuthProfessionalModule,
     ClientModule,
     PatientModule,
     CompanyModule,
@@ -14,7 +15,8 @@ import {
     TreatmentHasProfessionalModule,
     OrderModule,
     OrderDetailModule,
-    ClaimModule
+    ClaimModule,
+    ProfessionalModule
 } from './modules';
 
 @Module({
@@ -29,7 +31,8 @@ import {
             ],
         }),
         NatsModule,
-        AuthModule,
+        AuthClientModule,
+        AuthProfessionalModule,
         ClientModule,
         PatientModule,
         CompanyModule,
@@ -39,6 +42,7 @@ import {
         OrderModule,
         OrderDetailModule,
         ClaimModule,
+        ProfessionalModule,
     ],
     controllers: [],
     providers: [],

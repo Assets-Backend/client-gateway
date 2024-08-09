@@ -7,10 +7,10 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { Auth } from 'src/modules/auth/decorators/composition/auth.decorator';
 import { user_types } from 'src/modules/auth/enums/user_types.enum';
 import { CurrentUser } from 'src/modules/auth/decorators';
-import { User } from 'src/modules/auth/entities/user.entity';
 import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 import { catchError } from 'rxjs';
 import { PaginationArgs } from 'src/common/dto';
+import { AuthClient } from 'src/modules/auth/auth-client/entities/auth-client.entity';
 
 @Resolver(() => Claim)
 export class ClaimResolver {
@@ -22,7 +22,7 @@ export class ClaimResolver {
     @Auth(user_types.client)
     @Mutation(() => Claim, { name: 'createClaim' })
     async createClaim(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('createClaimInput') createClaimInput: CreateClaimInput
     ): Promise<Claim> {
 
@@ -38,7 +38,7 @@ export class ClaimResolver {
     @Auth(user_types.client)
     @Query(() => Claim, { name: 'findClaim' })
     async findClaim(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('claim_id', { type: () => Int }, ParseIntPipe) claim_id: Claim['claim_id'],
     ): Promise<Claim> {
 
@@ -54,7 +54,7 @@ export class ClaimResolver {
     @Auth(user_types.client)
     @Query(() => [Claim], { name: 'findClaimsByDetail' })
     async findClaimsByDetail(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('detail_fk', { type: () => Int }, ParseIntPipe) detail_fk: Claim['detail_fk'],
         @Args() paginationArgs: PaginationArgs,
     ): Promise<Claim[]> {
@@ -71,7 +71,7 @@ export class ClaimResolver {
     @Auth(user_types.client)
     @Query(() => [Claim], { name: 'findClaims' })
     async findClaims(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args() paginationArgs: PaginationArgs,
     ): Promise<Claim[]> {
 
@@ -87,7 +87,7 @@ export class ClaimResolver {
     @Auth(user_types.client)
     @Mutation(() => Claim, { name: 'updateClaim' })
     async updateClaim(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('updateClaimInput') updateClaimInput: UpdateClaimInput
     ): Promise<Claim> {
 
@@ -103,7 +103,7 @@ export class ClaimResolver {
     @Auth(user_types.clientAdmin)
     @Mutation(() => Claim, { name: 'deleteClaim' })
     async deleteClaim(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthClient,
         @Args('deleteClaimInput') deleteClaimInput: DeleteClaimInput
     ): Promise<Claim> {
 
