@@ -1,5 +1,5 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { OrderDetail, OrderDetailProfessional } from './entities';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
+import { OrderDetail } from './entities';
 import { CreateDetailInput, DeleteDetailInput, UpdateDetailInput } from './dto';
 import { Inject, ParseIntPipe } from '@nestjs/common';
 import { NATS_SERVICE } from 'src/config';
@@ -11,7 +11,7 @@ import { ClientIds } from 'src/common/interfaces/client-ids.interface';
 import { catchError } from 'rxjs';
 import { PaginationArgs } from 'src/common/dto';
 import { AuthClient } from 'src/modules/auth/auth-client/entities/auth-client.entity';
-import { AuthProfessional } from 'src/modules/auth/auth-professional/entities/auth-professional.entity';
+import { Order } from '../order/entities/order.entity';
 
 @Resolver(() => OrderDetail)
 export class OrderDetailClientResolver {
@@ -118,4 +118,21 @@ export class OrderDetailClientResolver {
         ) as unknown as OrderDetail;
     }
 
+    @Auth(user_types.professional)
+    @ResolveField(() => Order, {name: 'Order'})
+    async totalOrderss(
+        @CurrentUser() user: AuthClient,
+        @Parent() order: OrderDetail
+    ): Promise<number> {
+
+        const { current_client: currentClient }: { current_client: ClientIds } = user;
+        const { order_fk: order_id } = order;
+            
+        return this.client.send('order.find.order', { currentClient, order_id }).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as number;
+
+    }
 }

@@ -1,5 +1,5 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { OrderDetail, OrderDetailProfessional } from './entities';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
+import { OrderDetailProfessional } from './entities';
 import { CreateDetailInput, DeleteDetailInput, UpdateDetailInput } from './dto';
 import { Inject, ParseIntPipe } from '@nestjs/common';
 import { NATS_SERVICE } from 'src/config';
@@ -12,8 +12,9 @@ import { catchError } from 'rxjs';
 import { PaginationArgs } from 'src/common/dto';
 import { AuthClient } from 'src/modules/auth/auth-client/entities/auth-client.entity';
 import { AuthProfessional } from 'src/modules/auth/auth-professional/entities/auth-professional.entity';
+import { Order } from '../order/entities/order.entity';
 
-@Resolver(() => OrderDetail)
+@Resolver(() => OrderDetailProfessional)
 export class OrderDetailProfessionalResolver {
 
     constructor(
@@ -21,11 +22,11 @@ export class OrderDetailProfessionalResolver {
     ) {}
 
     @Auth(user_types.professional)
-    @Mutation(() => OrderDetail, { name: 'acceptDetail' })
+    @Mutation(() => OrderDetailProfessional, { name: 'acceptDetail' })
     async deletePatient(
         @CurrentUser() user: AuthProfessional,
-        @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetail['detail_id'],
-    ): Promise<OrderDetail> {
+        @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetailProfessional['detail_id'],
+    ): Promise<OrderDetailProfessional> {
 
         const { user_id: professional_id } = user
 
@@ -33,14 +34,14 @@ export class OrderDetailProfessionalResolver {
             catchError(error => {
                 throw new RpcException(error)
             })
-        ) as unknown as OrderDetail;
+        ) as unknown as OrderDetailProfessional;
     }
 
     @Auth(user_types.professional)
     @Query(() => [OrderDetailProfessional], { name: 'getProfessionalDetails' })
     async getProfessionalDetails(
         @CurrentUser() user: AuthProfessional,
-        @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetail['detail_id'],
+        @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetailProfessional['detail_id'],
         @Args() paginationArgs: PaginationArgs,
     ): Promise<OrderDetailProfessional[]> {
 
@@ -57,7 +58,7 @@ export class OrderDetailProfessionalResolver {
     @Query(() => [OrderDetailProfessional], { name: 'getProfessionalDetail' })
     async getProfessionalDetail(
         @CurrentUser() user: AuthProfessional,
-        @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetail['detail_id'],
+        @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetailProfessional['detail_id'],
     ): Promise<OrderDetailProfessional[]> {
 
         const { user_id: professional_id } = user
@@ -73,7 +74,7 @@ export class OrderDetailProfessionalResolver {
     @Query(() => [OrderDetailProfessional], { name: 'findPendingOrders' })
     async findPendingOrders(
         @CurrentUser() user: AuthProfessional,
-        @Args('client_fk', { type: () => Int }, ParseIntPipe) client_fk: OrderDetail['client_fk'],
+        @Args('client_fk', { type: () => Int }, ParseIntPipe) client_fk: OrderDetailProfessional['client_fk'],
         @Args() paginationArgs: PaginationArgs,
     ): Promise<OrderDetailProfessional[]> {
 
@@ -84,5 +85,21 @@ export class OrderDetailProfessionalResolver {
                 throw new RpcException(error)
             })
         ) as unknown as OrderDetailProfessional[];
+    }
+
+    @Auth(user_types.professional)
+    @ResolveField(() => Order, {name: 'Order'})
+    async totalOrderss(
+        @Parent() order: OrderDetailProfessional
+    ): Promise<number> {
+
+        const { order_fk: order_id } = order;
+            
+        return this.client.send('order.find.order', { order_id }).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as number;
+
     }
 }

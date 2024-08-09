@@ -173,6 +173,7 @@ type OrderDetail {
   requirements: String
   updated_at: String!
   created_at: String!
+  Order: Order!
 }
 
 type OrderDetailProfessional {
@@ -191,6 +192,7 @@ type OrderDetailProfessional {
   requirements: String
   updated_at: String!
   created_at: String!
+  Order: Order!
 }
 
 type Claim {
@@ -290,7 +292,7 @@ type Mutation {
   createDetail(createDetailInput: CreateDetailInput!): OrderDetail!
   updateDetail(updateDetailInput: UpdateDetailInput!): OrderDetail!
   finalizeDetail(deleteDetailInput: DeleteDetailInput!): OrderDetail!
-  acceptDetail(detail_id: Int!): OrderDetail!
+  acceptDetail(detail_id: Int!): OrderDetailProfessional!
   createClaim(createClaimInput: CreateClaimInput!): Claim!
   updateClaim(updateClaimInput: UpdateClaimInput!): Claim!
   deleteClaim(deleteClaimInput: DeleteClaimInput!): Claim!
