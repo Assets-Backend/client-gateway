@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { OrderDetail } from './entities/order-detail.entity';
+import { OrderDetail, OrderDetailProfessional } from './entities';
 import { CreateDetailInput, DeleteDetailInput, UpdateDetailInput } from './dto';
 import { Inject, ParseIntPipe } from '@nestjs/common';
 import { NATS_SERVICE } from 'src/config';
@@ -14,7 +14,7 @@ import { AuthClient } from 'src/modules/auth/auth-client/entities/auth-client.en
 import { AuthProfessional } from 'src/modules/auth/auth-professional/entities/auth-professional.entity';
 
 @Resolver(() => OrderDetail)
-export class OrderDetailResolver {
+export class OrderDetailClientResolver {
 
     constructor(
         @Inject(NATS_SERVICE) private readonly client: ClientProxy
@@ -70,6 +70,23 @@ export class OrderDetailResolver {
     }
 
     @Auth(user_types.client)
+    @Query(() => [OrderDetail], { name: 'findDetailsByProfessional' })
+    async findDetailsByProfessional(
+        @CurrentUser() user: AuthClient,
+        @Args('professional_fk', { type: () => Int }, ParseIntPipe) professional_fk: OrderDetail['professional_fk'],
+        @Args() paginationArgs: PaginationArgs,
+    ): Promise<OrderDetail[]> {
+
+        const { current_client: currentClient }: { current_client: ClientIds } = user;
+
+        return this.client.send('order.findAll.details', {currentClient, whereInput: {professional_fk}, paginationDto: paginationArgs}).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as OrderDetail[];
+    }
+
+    @Auth(user_types.client)
     @Mutation(() => OrderDetail, { name: 'updateDetail' })
     async update(
         @CurrentUser() user: AuthClient,
@@ -101,19 +118,4 @@ export class OrderDetailResolver {
         ) as unknown as OrderDetail;
     }
 
-    @Auth(user_types.professional)
-    @Mutation(() => OrderDetail, { name: 'acceptDetail' })
-    async deletePatient(
-        @CurrentUser() user: AuthProfessional,
-        @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetail['detail_id'],
-    ): Promise<OrderDetail> {
-
-        const { user_id: professional_id } = user
-
-        return this.client.send('order.accept.detail', {professional_id, detail_id}).pipe(
-            catchError(error => {
-                throw new RpcException(error)
-            })
-        ) as unknown as OrderDetail;
-    }
 }

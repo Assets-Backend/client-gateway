@@ -175,6 +175,24 @@ type OrderDetail {
   created_at: String!
 }
 
+type OrderDetailProfessional {
+  detail_id: Int!
+  order_fk: Int!
+  client_fk: Int!
+  professional_fk: Int
+  start_date: String!
+  finish_date: String!
+  total_sessions: Int!
+  sessions: Int!
+  coinsurance: Int!
+  cost: Int!
+  started_at: String
+  finished_at: String
+  requirements: String
+  updated_at: String!
+  created_at: String!
+}
+
 type Claim {
   claim_id: Int!
   detail_fk: Int!
@@ -225,6 +243,10 @@ type Query {
   findOrders(offset: Int = 0, limit: Int = 10): [Order!]!
   findDetail(detail_id: Int!): OrderDetail!
   findDetailsByOrder(order_fk: Int!, offset: Int = 0, limit: Int = 10): [OrderDetail!]!
+  findDetailsByProfessional(professional_fk: Int!, offset: Int = 0, limit: Int = 10): [OrderDetail!]!
+  getProfessionalDetails(detail_id: Int!, offset: Int = 0, limit: Int = 10): [OrderDetailProfessional!]!
+  getProfessionalDetail(detail_id: Int!): [OrderDetailProfessional!]!
+  findPendingOrders(client_fk: Int!, offset: Int = 0, limit: Int = 10): [OrderDetailProfessional!]!
   findClaim(claim_id: Int!): Claim!
   findClaimsByDetail(detail_fk: Int!, offset: Int = 0, limit: Int = 10): [Claim!]!
   findClaims(offset: Int = 0, limit: Int = 10): [Claim!]!
