@@ -22,7 +22,7 @@ export class OrderDetailProfessionalResolver {
     ) {}
 
     @Auth(user_types.professional)
-    @Mutation(() => OrderDetailProfessional, { name: 'acceptDetail' })
+    @Mutation(() => OrderDetailProfessional, { name: 'acceptOrderDetail' })
     async deletePatient(
         @CurrentUser() user: AuthProfessional,
         @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetailProfessional['detail_id'],
@@ -41,13 +41,12 @@ export class OrderDetailProfessionalResolver {
     @Query(() => [OrderDetailProfessional], { name: 'getProfessionalDetails' })
     async getProfessionalDetails(
         @CurrentUser() user: AuthProfessional,
-        @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetailProfessional['detail_id'],
         @Args() paginationArgs: PaginationArgs,
     ): Promise<OrderDetailProfessional[]> {
 
         const { user_id: professional_id } = user
 
-        return this.client.send('order.getDetails.detail', {professional_id, detail_id, paginationDto: paginationArgs}).pipe(
+        return this.client.send('order.getDetails.detail', {professional_id, paginationDto: paginationArgs}).pipe(
             catchError(error => {
                 throw new RpcException(error)
             })
