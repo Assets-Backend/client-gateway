@@ -193,6 +193,18 @@ type OrderDetailProfessional {
   updated_at: String!
   created_at: String!
   Order: Order!
+  Client: OrderDetailCoordinator!
+}
+
+type OrderDetailCoordinator {
+  patient: String!
+  healthcare_provider: String
+  age: Int
+  gender: gender_options!
+  company: String!
+  client: String!
+  treatment: String!
+  abbreviation: String!
 }
 
 type Claim {
@@ -246,7 +258,7 @@ type Query {
   findDetail(detail_id: Int!): OrderDetail!
   findDetailsByOrder(order_fk: Int!, offset: Int = 0, limit: Int = 10): [OrderDetail!]!
   findDetailsByProfessional(professional_fk: Int!, offset: Int = 0, limit: Int = 10): [OrderDetail!]!
-  getProfessionalDetails(detail_id: Int!, offset: Int = 0, limit: Int = 10): [OrderDetailProfessional!]!
+  getProfessionalDetails(offset: Int = 0, limit: Int = 10): [OrderDetailProfessional!]!
   getProfessionalDetail(detail_id: Int!): [OrderDetailProfessional!]!
   findPendingOrders(client_fk: Int!, offset: Int = 0, limit: Int = 10): [OrderDetailProfessional!]!
   findClaim(claim_id: Int!): Claim!
@@ -292,7 +304,7 @@ type Mutation {
   createDetail(createDetailInput: CreateDetailInput!): OrderDetail!
   updateDetail(updateDetailInput: UpdateDetailInput!): OrderDetail!
   finalizeDetail(deleteDetailInput: DeleteDetailInput!): OrderDetail!
-  acceptDetail(detail_id: Int!): OrderDetailProfessional!
+  acceptOrderDetail(detail_id: Int!): OrderDetailProfessional!
   createClaim(createClaimInput: CreateClaimInput!): Claim!
   updateClaim(updateClaimInput: UpdateClaimInput!): Claim!
   deleteClaim(deleteClaimInput: DeleteClaimInput!): Claim!

@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
-import { OrderDetailProfessional } from './entities';
+import { OrderDetailCoordinator, OrderDetailProfessional } from './entities';
 import { CreateDetailInput, DeleteDetailInput, UpdateDetailInput } from './dto';
 import { Inject, ParseIntPipe } from '@nestjs/common';
 import { NATS_SERVICE } from 'src/config';
@@ -13,6 +13,8 @@ import { PaginationArgs } from 'src/common/dto';
 import { AuthClient } from 'src/modules/auth/auth-client/entities/auth-client.entity';
 import { AuthProfessional } from 'src/modules/auth/auth-professional/entities/auth-professional.entity';
 import { Order } from '../order/entities/order.entity';
+import { Patient } from 'src/modules/coordinator/patient/entities/patient.entity';
+import { Client } from 'src/modules/coordinator/client/entities/client.entity';
 
 @Resolver(() => OrderDetailProfessional)
 export class OrderDetailProfessionalResolver {
@@ -88,7 +90,7 @@ export class OrderDetailProfessionalResolver {
 
     @Auth(user_types.professional)
     @ResolveField(() => Order, {name: 'Order'})
-    async totalOrderss(
+    async Order(
         @Parent() order: OrderDetailProfessional
     ): Promise<number> {
 
@@ -101,4 +103,21 @@ export class OrderDetailProfessionalResolver {
         ) as unknown as number;
 
     }
+
+    @Auth(user_types.professional)
+    @ResolveField(() => OrderDetailCoordinator, {name: 'Client'})
+    async Client(
+        @Parent() order: OrderDetailProfessional
+    ): Promise<number> {
+
+        const { order_fk, client_fk: client_id } = order;
+            
+        return this.client.send('coordinator.findByOrder.coordinator', { order_fk, client_id }).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as number;
+    }
+
+
 }
