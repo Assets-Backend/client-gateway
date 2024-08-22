@@ -56,11 +56,11 @@ export class OrderDetailProfessionalResolver {
     }
     
     @Auth(user_types.professional)
-    @Query(() => [OrderDetailProfessional], { name: 'getProfessionalDetail' })
+    @Query(() => OrderDetailProfessional, { name: 'getProfessionalDetail' })
     async getProfessionalDetail(
         @CurrentUser() user: AuthProfessional,
         @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetailProfessional['detail_id'],
-    ): Promise<OrderDetailProfessional[]> {
+    ): Promise<OrderDetailProfessional> {
 
         const { user_id: professional_id } = user
 
@@ -68,7 +68,7 @@ export class OrderDetailProfessionalResolver {
             catchError(error => {
                 throw new RpcException(error)
             })
-        ) as unknown as OrderDetailProfessional[];
+        ) as unknown as OrderDetailProfessional;
     }
 
     @Auth(user_types.professional)
