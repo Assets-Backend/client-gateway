@@ -89,6 +89,22 @@ export class OrderDetailProfessionalResolver {
     }
 
     @Auth(user_types.professional)
+    @Mutation(() => OrderDetailProfessional, { name: 'addSession' })
+    async update(
+        @CurrentUser() user: AuthProfessional,
+        @Args('detail_id', { type: () => Int }, ParseIntPipe) detail_id: OrderDetailProfessional['detail_id'],
+    ): Promise<OrderDetailProfessional> {
+
+        const { user_id: professional_id } = user
+
+        return this.client.send('order.addSession.detail', {professional_id, detail_id}).pipe(
+            catchError(error => {
+                throw new RpcException(error)
+            })
+        ) as unknown as OrderDetailProfessional;
+    }
+
+    @Auth(user_types.professional)
     @ResolveField(() => Order, {name: 'Order'})
     async Order(
         @Parent() order: OrderDetailProfessional
@@ -118,6 +134,4 @@ export class OrderDetailProfessionalResolver {
             })
         ) as unknown as number;
     }
-
-
 }
